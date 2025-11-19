@@ -25,17 +25,28 @@ public class KnowledgeGraphController {
         this.knowledgeGraphService = knowledgeGraphService;
         this.classResourceService = classResourceService;
     }
-    @PostMapping("/courses/${courseId}/generate-by-ai-resources")
+    @PostMapping("/courses/{courseId}/generate-by-ai-resources")
     public ResponseEntity<KnowledgeGraphDTO> generateByAiResources(
-
+            @PathVariable("teacherId") Long teacherId,
             @PathVariable("courseId") Long courseId,
             @RequestBody List<Long> resources) {
-        KnowledgeGraphDTO knowledgeGraphDTO = knowledgeGraphService.generateByAI(courseId,resources);
+
+        System.out.println("========================================");
+        System.out.println("✅ 收到请求！");
+        System.out.println("teacherId: " + teacherId);
+        System.out.println("courseId: " + courseId);
+        System.out.println("资源列表: " + resources);
+        System.out.println("资源数量: " + resources.size());
+        System.out.println("========================================");
+
+        KnowledgeGraphDTO knowledgeGraphDTO = knowledgeGraphService.generateByAI(courseId, resources);
+        return ResponseEntity.ok(knowledgeGraphDTO);
     }
     //获取某课程现有所有知识点，作为知识图谱初始化依据
     @GetMapping("/points/allresource/{courseId}")
     public ResponseEntity<List> pointsAllResource(
             @PathVariable("courseId") Integer courseId){
+        System.out.println("测试");
         List<ClassResource> original_resource = classResourceService.getAllResources(courseId);
         return ResponseEntity.ok(original_resource);
     }
