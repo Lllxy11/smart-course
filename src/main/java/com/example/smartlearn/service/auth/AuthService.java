@@ -42,9 +42,10 @@ public class AuthService {
 
         System.out.println("接收登录请求: " + request.getAccount() + ", 角色: " + request.getRole());
 
-        // 添加角色条件查询
+        // 允许用账号或姓名登录：先按账号+角色查，找不到再按姓名映射到用户
         User user = userRepository.findByAccountAndRole(request.getAccount(), request.getRole())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "账号不存在"));
+                .orElseGet(() -> findUserByName(request.getAccount(), request.getRole())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "账号或姓名不存在")));
 
         System.out.println("数据库查询结果: " + user.getAccount());
 
@@ -124,5 +125,16 @@ public class AuthService {
         }
     }
 
-
+    /**
+     * 按姓名映射到用户：教师用姓名匹配 teacher 表，学生用 student_name。
+     */
+    private java.util.Optional<User> findUserByName(String nameOrAccount, String role) {
+        if ("teacher".equalsIgnoreCase(role)) {
+            return teacherRepository.findByName(nameOrAccount).map(Teacher::getUser);
+        }
+        if ("student".equalsIgnoreCase(role)) {
+            return studentRepository.findByStudentName(nameOrAccount).map(Student::getUser);
+        }
+        return java.util.Optional.empty();
+    }
 }

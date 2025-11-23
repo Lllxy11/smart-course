@@ -22,4 +22,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT s FROM Student s JOIN s.studentCourseRecords sc WHERE sc.course.courseId = :courseId")
     Page<Student> findByCourseId(@Param("courseId") Long courseId, Pageable pageable);
     Optional<Student> findByUser(User user);
+
+    Optional<Student> findByStudentName(String studentName);
 }

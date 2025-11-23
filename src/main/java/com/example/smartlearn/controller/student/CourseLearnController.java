@@ -1,6 +1,7 @@
 package com.example.smartlearn.controller.student;
 
 import com.example.smartlearn.dto.StudentCourseDTO;
+import com.example.smartlearn.dto.StudentCourseStatusDTO;
 import com.example.smartlearn.model.ClassResource;
 import com.example.smartlearn.repository.ClassResourceRepository;
 import com.example.smartlearn.repository.CourseRepository;
@@ -51,6 +52,17 @@ public class CourseLearnController {
             e.printStackTrace(); // 打印完整异常堆栈
             throw e; // 重新抛出
         }
+    }
+
+    @GetMapping("/courses/all")
+    public ResponseEntity<List<StudentCourseStatusDTO>> getCoursesWithStatus(@PathVariable Long studentId) {
+        return ResponseEntity.ok(courseLearnService.getCoursesWithStatus(studentId));
+    }
+
+    @PostMapping("/enroll/{courseId}")
+    public ResponseEntity<Void> enrollCourse(@PathVariable Long studentId, @PathVariable Long courseId) {
+        courseLearnService.enrollCourse(studentId, courseId);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/course")
